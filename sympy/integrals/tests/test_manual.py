@@ -1471,3 +1471,10 @@ def test_manualintegrate_trig_log_hang():
     expr = log((cos(x)/2 + 1) / (1 - cos(x)/2)) / cos(x)
     res = manualintegrate(expr, x)
     assert res is not None
+
+def test_manualintegrate_cache_preserves_assumptions():
+    x = Symbol('x', positive=True)
+    expression = (x / sqrt(x**2 + 2*x + 1) + log(x) / (x * sqrt(log(x)**2 + 2*log(x) + 1)))
+    result = manualintegrate(expression, x)
+    error = (diff(result, x) - expression).subs(x, Rational(1, 10)).evalf()
+    assert abs(error) < 1e-8
